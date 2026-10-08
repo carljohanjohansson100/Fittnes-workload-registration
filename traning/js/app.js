@@ -7,6 +7,8 @@
 
   let entries = Store.loadEntries();
   let profile = Store.loadProfile();
+  const PAGE = 30;
+  let shown = PAGE;
 
   const parseDate = iso => { const [y, m, d] = iso.split('-').map(Number); return new Date(y, m - 1, d); };
   const weekday = iso => WEEKDAYS[parseDate(iso).getDay()];
@@ -71,7 +73,7 @@
     const tbody = $('log-table').querySelector('tbody');
     tbody.textContent = '';
     const sorted = [...entries].sort((a, b) => b.date.localeCompare(a.date) || b.id - a.id);
-    for (const e of sorted) {
+    for (const e of sorted.slice(0, shown)) {
       const tr = document.createElement('tr');
       const cells = [
         e.date, weekday(e.date), TYPE_LABEL[e.type] || e.type, e.minutes,
@@ -81,6 +83,9 @@
         const td = document.createElement('td');
         td.textContent = v; // textContent: kommentaren kan inte injicera HTML
         if (i === 7) td.className = 'comment';
+        if (i === 1) td.className = 'c-dag';
+        if (i === 4) td.className = 'c-km';
+        if (i === 5) td.className = 'c-puls';
         if (i === 6) {
           td.title = e.note || '';
           if (e.source === 'formel') td.textContent = v + ' *';
@@ -99,6 +104,10 @@
       td.appendChild(del); tr.appendChild(td);
       tbody.appendChild(tr);
     }
+    const rest = sorted.length - shown;
+    const more = $('btn-more');
+    more.classList.toggle('hidden', rest <= 0);
+    more.textContent = `Visa fler (${rest} kvar)`;
     $('empty').classList.toggle('hidden', entries.length > 0);
     $('log-table').classList.toggle('hidden', entries.length === 0);
   }
@@ -124,6 +133,7 @@
     $('f-count').textContent = `${$('f-comment').value.length}/300`;
   });
   $('f-date').addEventListener('input', renderWeekday);
+  $('btn-more').addEventListener('click', () => { shown += PAGE; renderTable(); });
 
   async function estimateKcal(type, minutes, hr, weight) {
     try {
@@ -173,6 +183,7 @@
       kcal: est.kcal, source: est.source, note: est.note,
     });
     if (!Store.saveEntries(entries)) err.textContent = 'Kunde inte spara i webbläsaren.';
+    shown = PAGE;
     $('f-minutes').value = ''; $('f-km').value = ''; $('f-hr').value = ''; $('f-comment').value = '';
     $('f-count').textContent = '0/300';
     render();
