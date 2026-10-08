@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Träning – Charles Services</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="top">
+    <h1>Träning</h1>
+    <nav class="tabs" role="tablist">
+      <button class="tab active" data-tab="log" role="tab">Träningslogg</button>
+      <button class="tab" data-tab="profile" role="tab">Profil</button>
+    </nav>
+  </header>
+
+  <main>
+    <section id="tab-log" class="tabpanel">
+      <div id="profile-warning" class="warning hidden">
+        Ange vikt under fliken Profil för att kalorier ska kunna beräknas.
+      </div>
+
+      <div class="layout">
+        <div class="left">
+          <form id="entry-form" class="panel" autocomplete="off">
+            <h3>Registrera pass</h3>
+            <div class="row">
+              <label>Datum
+                <input type="date" id="f-date" required />
+              </label>
+              <span id="f-weekday" class="weekday"></span>
+            </div>
+            <div class="row">
+              <label>Träningstyp
+                <select id="f-type" required>
+                  <option value="promenad">Promenad</option>
+                  <option value="löpning">Löpning</option>
+                  <option value="gym">Gym</option>
+                  <option value="cykling">Cykling</option>
+                  <option value="simning">Simning</option>
+                </select>
+              </label>
+              <label>Tid (min)
+                <input type="number" id="f-minutes" min="1" max="1440" step="1" required />
+              </label>
+              <label>Distans (km)
+                <input type="number" id="f-km" min="0" max="500" step="0.01" />
+              </label>
+              <label>Puls vid slut
+                <input type="number" id="f-hr" min="30" max="250" step="1" />
+              </label>
+            </div>
+            <label>Kommentar <small id="f-count">0/300</small>
+              <textarea id="f-comment" maxlength="300" rows="2"></textarea>
+            </label>
+            <div class="row">
+              <button type="submit" class="primary">Spara pass</button>
+              <span id="f-error" class="error"></span>
+            </div>
+          </form>
+
+          <div class="panel tablewrap">
+            <table id="log-table">
+              <thead>
+                <tr>
+                  <th>Datum</th><th>Dag</th><th>Typ</th><th>Min</th>
+                  <th>Km</th><th>Puls</th><th>Kcal</th><th>Kommentar</th><th></th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+            <p id="empty" class="muted hidden">Inga pass registrerade ännu.</p>
+          </div>
+        </div>
+
+        <div class="right panel">
+          <h3>Kalorier och minuter per dag</h3>
+          <canvas id="chart" width="640" height="380"></canvas>
+          <p class="muted small">
+            Kalorierna beräknas av AI utifrån träningstyp, tid, vikt och puls vid slut
+            och är en uppskattning. Distans används inte. * = reservberäkning med
+            formel när AI-tjänsten inte svarade. Hovra över kcal för motivering.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="tab-profile" class="tabpanel hidden">
+      <form id="profile-form" class="panel narrow" autocomplete="off">
+        <h3>Den som tränar</h3>
+        <label>Namn <input type="text" id="p-name" maxlength="80" /></label>
+        <label>Vikt (kg) <input type="number" id="p-weight" min="20" max="400" step="0.1" required /></label>
+        <label>Längd (cm) <input type="number" id="p-height" min="80" max="250" step="1" /></label>
+        <div class="row">
+          <button type="submit" class="primary">Spara profil</button>
+          <span id="p-status" class="ok"></span>
+        </div>
+        <p class="muted small">Uppgifterna sparas bara i den här webbläsaren. Vikten vid registreringstillfället används för kaloriberäkningen och ändras inte i redan sparade pass.</p>
+      </form>
+      <div class="panel narrow">
+        <h3>Säkerhetskopia</h3>
+        <div class="row">
+          <button type="button" id="btn-export" class="primary">Exportera JSON</button>
+          <label class="filebtn">Importera JSON
+            <input type="file" id="import-file" accept="application/json,.json" />
+          </label>
+        </div>
+        <p id="io-status" class="muted small"></p>
+        <p class="muted small">Importen slås ihop med befintliga pass (samma pass läggs inte till två gånger). Profilen i filen ersätter den nuvarande.</p>
+      </div>
+
+      <div class="panel narrow">
+        <h3>AI-tjänst</h3>
+        <label>API-token (om tjänsten kräver det)
+          <input type="password" id="p-token" autocomplete="off" />
+        </label>
+        <div class="row"><button type="button" id="btn-token" class="primary">Spara token</button></div>
+        <p class="muted small">Sparas bara i den här webbläsaren och skickas som X-API-Token.</p>
+      </div>
+    </section>
+  </main>
+
+  <script src="js/calories.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/chart.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+# Hemligheter, committa aldrig
+.env
+.env.*
+
+# Python
+__pycache__/
+.pytest_cache/
+.venv/
+
+# OS
+.DS_Store
+Thumbs.db
