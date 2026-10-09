@@ -15,7 +15,7 @@ const Chart = {
     const m = { l: 52, r: 52, t: 30, b: 50 };
     const w = cssW - m.l - m.r;
     const h = cssH - m.t - m.b;
-    const C = { kcal: '#ff9f43', min: '#4cc9f0', grid: '#2a2f55', text: '#9aa3c4' };
+    const C = { kcal: '#e8710a', min: '#0b7fa8', grid: '#dfe3f0', text: '#5b6486' };
 
     ctx.font = '12px -apple-system, Segoe UI, Roboto, sans-serif';
     ctx.textBaseline = 'middle';
