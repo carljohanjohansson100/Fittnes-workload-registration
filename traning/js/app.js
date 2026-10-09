@@ -11,6 +11,12 @@
   let shown = PAGE;
 
   const parseDate = iso => { const [y, m, d] = iso.split('-').map(Number); return new Date(y, m - 1, d); };
+  const validDate = iso => {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return false;
+    const [y, m, d] = iso.split('-').map(Number);
+    const t = parseDate(iso);
+    return t.getFullYear() === y && t.getMonth() === m - 1 && t.getDate() === d;
+  };
   const weekday = iso => WEEKDAYS[parseDate(iso).getDay()];
   const todayIso = () => {
     const t = new Date();
@@ -66,7 +72,7 @@
 
   function renderWeekday() {
     const v = $('f-date').value;
-    $('f-weekday').textContent = v ? weekday(v) : '';
+    $('f-weekday').textContent = validDate(v) ? weekday(v) : '';
   }
 
   function renderTable() {
@@ -170,7 +176,8 @@
     const hr = num('f-hr');
     const comment = $('f-comment').value.slice(0, 300);
 
-    if (!date || !(minutes > 0)) { err.textContent = 'Datum och tid (minuter) krävs.'; return; }
+    if (!validDate(date)) { err.textContent = 'Ange datum som ÅÅÅÅ-MM-DD, till exempel 2026-10-09.'; return; }
+    if (!(minutes > 0)) { err.textContent = 'Tid (minuter) krävs.'; return; }
     if (km !== null && km < 0) { err.textContent = 'Distans kan inte vara negativ.'; return; }
 
     const btn = $('entry-form').querySelector('button[type=submit]');
